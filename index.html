@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1513">
+<title>AI_traveller</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--ink:#182b29;--muted:#737e76;--paper:#f3f1e9;--line:#e2dfd3;--green:#176b55;--green-dark:#104d40;--mint:#e3eee5;--gold:#e5aa46;--clay:#bd634b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:'DM Sans',sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}
+.sidebar{position:fixed;inset:0 auto 0 0;z-index:5;display:flex;width:220px;flex-direction:column;padding:24px 16px;border-right:1px solid #183d35;background:#163a33}.brand{display:flex;align-items:center;gap:10px;padding:0 8px;color:#fffdf4;font-size:17px;font-weight:700;text-decoration:none}.brand-mark{position:relative;display:grid;width:38px;height:38px;place-items:center;border:2px solid #f4d383;border-radius:13px 13px 13px 6px;background:linear-gradient(145deg,#f8d77f,#db9c45);box-shadow:0 7px 16px #07130f55;transform:rotate(-4deg);transition:transform .25s ease,box-shadow .25s ease}.brand:hover .brand-mark{transform:rotate(4deg) translateY(-2px);box-shadow:0 10px 20px #07130f88}.brand-copy{display:grid;gap:1px}.brand-copy small{color:#b5c9bc;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase}.brand-mark svg,.nav-list svg{width:17px;height:17px}.side-label{margin:38px 10px 11px;color:#a3b9ab;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}.nav-list{display:grid;gap:5px}.nav-list a{display:flex;align-items:center;gap:12px;padding:11px;border-radius:7px;color:#c3d1c8;font-size:12px;text-decoration:none}.nav-list a:hover,.nav-list a.active{background:#28544a;color:#fff9e9}.nav-list a.active{box-shadow:inset 3px 0 var(--gold)}.sidebar-note{margin-top:auto;padding:14px;border:1px solid #31564a;border-radius:7px;background:#20483e;color:#cfdbd0;font-size:11px;line-height:1.6}.sidebar-note strong{display:block;margin-bottom:4px;color:#f6d48a;font-size:12px}
+.main{max-width:1600px;margin-left:220px;padding:0 36px 48px}.topbar{display:flex;min-height:65px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.breadcrumb,.profile{color:var(--muted);font-size:11px}.profile{display:flex;align-items:center;gap:9px;color:#58645c}.avatar{display:grid;width:33px;height:33px;place-items:center;border-radius:50%;background:#f1d391;color:#5e4427;font-weight:700}.page-intro{display:flex;min-height:185px;align-items:center;justify-content:space-between;gap:20px;padding:22px 0}.eyebrow{margin:0 0 7px;color:var(--clay);font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase}h1,h2,h3,p{margin-top:0}h1{max-width:540px;margin-bottom:7px;font-family:'Fraunces',Georgia,serif;font-size:clamp(30px,3vw,41px);font-weight:500}.intro-tamil{display:block;margin-bottom:8px;color:var(--green);font-size:14px;font-weight:600}.intro-copy{margin:0;color:var(--muted);font-size:12px}.today{display:flex;align-items:center;gap:8px;margin-top:12px;color:#68746c;font-size:11px}.today svg{width:15px}.destination-art{position:relative;width:min(36%,330px);height:130px;flex:0 0 auto;overflow:hidden;border-radius:7px;background:#728b61}.destination-art img{width:100%;height:100%;object-fit:cover}.destination-art:after{position:absolute;inset:35% 0 0;background:linear-gradient(transparent,rgba(18,39,32,.7));content:''}.destination-caption{position:absolute;z-index:1;right:12px;bottom:11px;left:12px;display:flex;align-items:end;justify-content:space-between;color:white}.destination-caption span{font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase}.destination-caption strong{display:block;margin-top:3px;font-family:'Fraunces',Georgia,serif;font-size:19px;font-weight:500}.destination-caption svg{width:17px;color:#f7d989}
+.primary-grid{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.4fr);gap:16px;align-items:stretch}.panel{min-width:0;overflow:hidden;border:1px solid var(--line);border-radius:7px;background:#fffefa;box-shadow:0 10px 30px #22362a0b}.panel-inner{padding:20px}.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.panel-heading h2,.map-title h2{margin:0 0 4px;font-size:15px;font-weight:700}.panel-heading p,.map-title p{margin:0;color:var(--muted);font-size:10px;line-height:1.5}.heading-icon{display:grid;width:34px;height:34px;flex:0 0 auto;place-items:center;border-radius:7px;background:#f8ead0;color:#996128}.heading-icon svg{width:16px;height:16px}label{display:block;margin-bottom:6px;color:#57635a;font-size:10px;font-weight:600}.field{margin-bottom:13px}input,textarea,select{display:block;width:100%;border:1px solid #dfe5df;border-radius:6px;outline:none;background:white;color:var(--ink);font-size:12px;transition:border-color .18s,box-shadow .18s}input,select{min-height:39px;padding:0 10px}textarea{min-height:104px;resize:vertical;padding:10px;line-height:1.55}input:focus,textarea:focus,select:focus{border-color:#7baa91;box-shadow:0 0 0 3px #28745b1a}.button{display:inline-flex;min-height:38px;align-items:center;justify-content:center;gap:7px;padding:0 13px;border:1px solid transparent;border-radius:6px;background:var(--green);color:white;font-size:11px;font-weight:600;transition:background .18s,transform .18s}.button:hover{transform:translateY(-1px);background:var(--green-dark)}.button:disabled{cursor:wait;opacity:.65}.button svg{width:14px;height:14px}.button.secondary{border-color:var(--line);background:white;color:#47544b}.button.secondary:hover{background:#f5f8f5}.button.full{width:100%}.voice-row{display:flex;align-items:center;gap:9px;margin:0 0 13px}.voice-row .button{flex:0 0 auto}.voice-hint{color:#89938b;font-size:10px;line-height:1.45}.voice-status{min-height:15px;margin:-6px 0 10px;color:var(--green-dark);font-size:10px}.result{margin-top:13px;padding:12px;border:1px solid #e3ebe4;border-radius:6px;background:#f5f8f4;color:#48584c;font-size:11px;line-height:1.65;white-space:pre-line}.result:empty{display:none}.assistant-reply{margin-bottom:10px}
+.map-panel{display:flex;flex-direction:column}.map-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 19px 14px}.map-title{display:flex;align-items:center;gap:9px}.live-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 9px;border:1px solid var(--line);border-radius:20px;color:#758078;font-size:9px;white-space:nowrap}.live-dot{width:7px;height:7px;border-radius:50%;background:#aeb8b0}.live-pill.is-live{border-color:#cce5d4;background:#f0f8f2;color:var(--green-dark)}.live-pill.is-live .live-dot{background:#32a36b;box-shadow:0 0 0 3px #d9f0e0;animation:pulse 1.8s infinite}@keyframes pulse{50%{box-shadow:0 0 0 6px #32a36b00}}#map{z-index:1;min-height:315px;flex:1;background:#e7ece7}.map-footer{display:flex;min-height:52px;align-items:center;justify-content:space-between;gap:10px;padding:9px 15px;border-top:1px solid var(--line)}.coordinates{color:#768078;font-size:10px}.section-title{display:flex;align-items:end;justify-content:space-between;margin:31px 0 14px}.section-title h2{margin:0;font-family:'Fraunces',Georgia,serif;font-size:23px;font-weight:500}.section-title>p{margin:0;color:var(--muted);font-size:10px}.lower-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:start}.stay-name{margin:2px 0 8px;font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:500}.stay-meta{display:flex;flex-wrap:wrap;gap:8px 12px;margin-bottom:15px;color:#738077;font-size:10px}.stay-meta span{display:inline-flex;align-items:center;gap:5px}.stay-meta svg{width:13px;height:13px}.price{margin-bottom:15px;color:var(--green-dark);font-size:17px;font-weight:700}.price small{color:var(--muted);font-size:10px;font-weight:400}.date-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.payment-box{margin:14px 0;padding:12px;border-radius:6px;background:#f5f7f3}.payment-row{display:flex;justify-content:space-between;gap:9px;padding:5px 0;color:#6f7a71;font-size:10px}.payment-row strong{color:var(--ink)}.payment-row.total{margin-top:5px;padding-top:9px;border-top:1px solid var(--line);color:var(--ink)}.notice{margin:9px 0 0;color:#929b93;font-size:9px;line-height:1.5}.review-stars{color:#d5934e;font-size:14px}
+@media(max-width:1080px){.sidebar{width:196px}.main{margin-left:196px;padding-right:22px;padding-left:22px}.primary-grid{grid-template-columns:minmax(255px,.95fr) minmax(0,1.15fr)}.lower-grid{grid-template-columns:1fr 1fr}.lower-grid>:last-child{grid-column:1/-1}}
+@media(max-width:740px){.sidebar{position:sticky;inset:0 0 auto;width:100%;height:auto;flex-direction:row;align-items:center;justify-content:space-between;padding:9px 12px;border-right:0;border-bottom:1px solid #183d35}.brand{padding:0;font-size:14px}.brand-mark{width:30px;height:30px}.side-label,.sidebar-note{display:none}.nav-list{display:flex;gap:1px}.nav-list a{justify-content:center;gap:0;padding:8px}.nav-list a span{display:none}.nav-list svg{width:17px;height:17px}.main{margin-left:0;padding:0 14px 28px}.topbar{min-height:47px}.profile>span{display:none}.page-intro{flex-wrap:wrap;align-items:flex-start;padding:20px 0 16px}.page-intro>div:first-child{min-width:0;flex:1 1 230px}.destination-art{width:100%;height:110px}.destination-caption{right:9px;bottom:8px;left:9px}.destination-caption strong{font-size:16px}.primary-grid,.lower-grid{grid-template-columns:1fr}.lower-grid>:last-child{grid-column:auto}.panel-inner{padding:17px}#map{min-height:280px}.section-title{margin-top:25px}.section-title>p{display:none}}
+@media(max-width:390px){.nav-list a{padding:7px}.destination-art{height:98px}.map-top{padding-right:12px;padding-left:12px}.live-pill{padding:5px 7px}.map-footer{align-items:flex-start;flex-direction:column}}
+:root{color-scheme:dark;--ink:#e8f0e9;--muted:#9aaea2;--paper:#0b1513;--line:#293b34;--green:#57d1a2;--green-dark:#102a22;--mint:#17352b;--gold:#e2b85e;--clay:#e49a75}
+body{background:#0b1513;background-image:linear-gradient(135deg,#0d1a17 0%,#0b1513 56%,#111c18 100%);color:var(--ink)}
+.sidebar{background:#08110f;border-color:#1c322a}.brand{color:#f1f7ef}.brand-mark{background:#0e241c;border:1px solid #3c6651;color:#8ce0b2;box-shadow:inset 0 0 0 3px #102a20}.brand-spark{border-color:#08110f;background:#e2b85e;color:#19271d}.brand-copy small,.side-label{color:#8fa79a}.nav-list a{color:#b2c3b7}.nav-list a:hover,.nav-list a.active{background:#17352b;color:#eafff2}.sidebar-note{border-color:#29483a;background:#11251d;color:#b5c9ba}.sidebar-note strong{color:#e8c879}
+.topbar{border-color:var(--line)}.breadcrumb{color:#82958a}.profile{color:#bdcdc1}.avatar{background:#d8bc78;color:#233426}.eyebrow{color:#e49a75}.intro-tamil{color:#88dcb0}.intro-copy,.today{color:#a2b1a6}
+.panel{border-color:#293b34;background:#111d19;box-shadow:0 16px 36px #00000030}.panel-heading h2,.map-title h2,.stay-name{color:#edf4ec}.panel-heading p,.map-title p{color:#9aada1}.heading-icon{background:#2b3024;color:#e6c16a}label{color:#b8c8bc}
+input,textarea,select{border-color:#34473e;background:#0c1714;color:#e8f0e9}input::placeholder,textarea::placeholder{color:#768a7d}input:focus,textarea:focus,select:focus{border-color:#62cc9e;box-shadow:0 0 0 3px #57d1a222}
+.button{background:#57d1a2;color:#082019}.button:hover{background:#78e0b5}.button.secondary{border-color:#3b5045;background:#17241f;color:#dce9df}.button.secondary:hover{background:#22352c}.quick-prompts button{border-color:#35473c;background:#18261f;color:#c7d5c9}.quick-prompts button:hover{border-color:#5b8a6d;background:#203b2d;color:#e1ffeb}.voice-hint,.voice-status{color:#a8b8ac}
+.result{border-color:#304339;background:#17251e;color:#d4e2d6}.plan-cost{border-left-color:#e2b85e;background:#2b281e;color:#d1c7a7}.plan-cost strong{color:#f2e8c9}.budget-status{background:#1a4530;color:#9ce4b1}.budget-status.tight{background:#4a3122;color:#f1bb89}.day-plan{border-color:#304139}.day-index{color:#e49a75}.day-stop span{color:#8ea296}.day-stop strong{color:#e0ebe1}
+.map-footer{border-color:#293b34}.coordinates{color:#a2b2a6}.live-pill{border-color:#34473e;color:#a8b8ac}.live-pill.is-live{border-color:#286548;background:#142b1e;color:#9de6b3}.live-pill.is-live .live-dot{background:#59d99b}.payment-box{background:#18251f}.payment-row{color:#a7b6aa}.payment-row strong{color:#e7f1e8}.payment-row.total{border-color:#34473e;color:#e8f0e9}.price{color:#8ae0b1}.price small,.notice{color:#99aa9d}.review-stars{color:#e6ba63}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#15231c;color:#e6efe7}.leaflet-control-attribution{background:#0b1513cc!important;color:#b8c7bb!important}.leaflet-control-attribution a{color:#86d9ab!important}
+</style>
+<style>
+.cartoon-head{position:relative;z-index:1;width:24px;height:22px;margin-top:7px;border:2px solid #17352e;border-radius:48% 48% 45% 45%;background:radial-gradient(circle at 20% 68%,#ef765d 0 2px,transparent 2.5px),radial-gradient(circle at 80% 68%,#ef765d 0 2px,transparent 2.5px),#ffb27c;box-shadow:0 2px 0 #f9d28b}.cartoon-head:before{position:absolute;top:-8px;left:-4px;width:28px;height:11px;border:2px solid #17352e;border-bottom:0;border-radius:12px 12px 3px 3px;background:#16805d;content:''}.cartoon-eye{position:absolute;top:7px;width:3px;height:4px;border-radius:50%;background:#17352e}.cartoon-eye.left{left:5px}.cartoon-eye.right{right:5px}.cartoon-smile{position:absolute;bottom:3px;left:8px;width:6px;height:3px;border-bottom:1px solid #17352e;border-radius:0 0 8px 8px}.cartoon-backpack{position:absolute;bottom:2px;left:6px;width:27px;height:11px;border:1px solid #17352e;border-radius:8px 8px 4px 4px;background:#4e9de6;box-shadow:inset 0 2px #b6e1ff}
+#assistantResult{display:none}#assistantResult.has-plan{display:block}
+.plan-cost{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0;padding:10px 12px;border-left:3px solid var(--gold);background:#fbf5e9;color:#58645c;font-size:10px}
+.plan-cost strong{color:var(--ink);font-size:12px}.budget-status{margin-left:auto;padding:4px 7px;border-radius:20px;background:#e5f1e7;color:#286248;font-size:9px;font-weight:700}.budget-status.tight{background:#f8e9d9;color:#8d542c}
+.itinerary-grid{display:grid;gap:0}.day-plan{display:grid;grid-template-columns:74px minmax(0,1fr);gap:12px;padding:13px 0;border-top:1px solid var(--line)}.day-index{padding-top:2px;color:var(--clay);font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}.day-stops{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.day-stop{min-width:0}.day-stop span{display:block;margin-bottom:4px;color:var(--muted);font-size:9px}.day-stop strong{display:block;color:var(--ink);font-size:10px;font-weight:600;line-height:1.4}.plan-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+@media(max-width:520px){.day-plan{grid-template-columns:1fr;gap:5px}.day-stops{gap:7px}.day-stop strong{font-size:9px}.plan-cost{align-items:flex-start}.budget-status{margin-left:0}}
+.brand-mark{position:relative}.brand-spark{position:absolute;top:-5px;right:-5px;width:14px!important;height:14px!important;padding:2px;border:1px solid #163a33;border-radius:50%;background:#fff4d6;color:#a45b33}
+.quick-prompts{display:flex;flex-wrap:wrap;gap:7px;margin:-3px 0 13px}.quick-prompts button{min-height:29px;padding:0 9px;border:1px solid #e5dfd2;border-radius:18px;background:#fbf8ef;color:#53645a;font-size:10px}.quick-prompts button:hover{border-color:#c7d9cb;background:#edf4ed;color:var(--green-dark)}
+<style>
+:root{color-scheme:light;--ink:#17352e;--muted:#6e7e76;--paper:#f7faf6;--line:#dce8df;--green:#16805d;--green-dark:#0c5b43;--mint:#e8f5ec;--gold:#f2b94b;--clay:#e47458}
+body{background:linear-gradient(135deg,#fbfdf9 0%,#f2f8f3 55%,#fff8eb 100%);color:var(--ink)}
+.sidebar{background:#ffffff;border-color:#dce8df;box-shadow:8px 0 28px #174c3210}.brand{color:#17352e}.brand-copy small,.side-label{color:#789083}.brand-mark{background:conic-gradient(from 210deg,#f6c453,#ef765d,#4dbb91,#4e9de6,#f6c453);border-color:#ffffff;box-shadow:0 7px 18px #4b9c6c45}.brand:hover .brand-mark{box-shadow:0 10px 22px #4b9c6c66}.cartoon-head{border-color:#17352e;background:#ffb27c}.cartoon-head:before{border-color:#17352e;border-bottom:0;background:#16805d}.cartoon-eye,.cartoon-smile{background-color:#17352e;border-color:#17352e}.cartoon-backpack{background:#4e9de6;box-shadow:inset 0 2px #b6e1ff}.brand-spark{border-color:#ffffff;background:#fff4bd;color:#e47458}.nav-list a{color:#60736a}.nav-list a:hover,.nav-list a.active{background:#e8f5ec;color:#0c5b43}.sidebar-note{border-color:#d2e8d8;background:#f0faf2;color:#557064}.sidebar-note strong{color:#c26437}
+.topbar{border-color:var(--line)}.breadcrumb,.profile{color:#74857b}.avatar{background:#ffe1a0;color:#6e4b1f}.eyebrow{color:var(--clay)}.intro-tamil{color:var(--green)}.intro-copy,.today{color:#728178}.panel{border-color:var(--line);background:#ffffff;box-shadow:0 16px 36px #174c3210}.panel-heading h2,.map-title h2,.stay-name{color:var(--ink)}.panel-heading p,.map-title p{color:var(--muted)}.heading-icon{background:#fff2d2;color:#c47726}label{color:#5d7166}input,textarea,select{border-color:#d7e5da;background:#ffffff;color:var(--ink)}input::placeholder,textarea::placeholder{color:#91a198}.button{background:var(--green);color:#ffffff}.button:hover{background:var(--green-dark)}.button.secondary{border-color:#d5e3d9;background:#ffffff;color:#476056}.button.secondary:hover{background:#f1f8f2}.quick-prompts button{border-color:#d9e6dc;background:#f8fcf8;color:#4d6859}.quick-prompts button:hover{border-color:#9bc8a8;background:#eaf7ed;color:var(--green-dark)}.voice-hint,.voice-status{color:#84948a}.result{border-color:#d6e6da;background:#f4faf5;color:#365448}.plan-cost{background:#fff8e9}.plan-cost strong,.day-stop strong{color:var(--ink)}.budget-status{background:#e5f5e8;color:#286248}.day-plan{border-color:var(--line)}.day-index{color:var(--clay)}.day-stop span{color:#718278}.map-footer{border-color:var(--line)}.coordinates{color:#718278}.live-pill{border-color:#d7e5da;color:#718278}.payment-box{background:#f3f8f4}.payment-row{color:#718278}.payment-row strong{color:var(--ink)}.price{color:var(--green-dark)}.price small,.notice{color:#75857b}.review-stars{color:#e7ad3d}
+</style>
+<style>
+.google-like-marker{background:transparent;border:0}.google-like-marker span{display:block;position:relative;width:27px;height:27px;border:3px solid #ffffff;border-radius:50% 50% 50% 0;background:#1a73e8;box-shadow:0 2px 6px #1b3d5c66;transform:rotate(-45deg)}.google-like-marker span:after{position:absolute;top:6px;left:6px;width:9px;height:9px;border-radius:50%;background:#ffffff;content:''}
+.leaflet-control-zoom a{border-color:#d8e1e8!important;background:#ffffff!important;color:#4d6475!important}.leaflet-control-zoom a:hover{background:#f1f6fa!important}.leaflet-control-attribution{color:#6f7f88!important}.leaflet-control-attribution a{color:#467ca3!important}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+<a class="brand" href="#top" aria-label="AI traveller home"><span class="brand-mark" aria-hidden="true"><span class="cartoon-backpack"></span><span class="cartoon-head"><span class="cartoon-eye left"></span><span class="cartoon-eye right"></span><span class="cartoon-smile"></span></span><i class="brand-spark" data-lucide="sparkles"></i></span><span class="brand-copy">AI_traveller<small>your local trip guide</small></span></a>
+<p class="side-label">Workspace</p>
+<nav class="nav-list" aria-label="Main navigation"><a class="active" href="#top"><i data-lucide="layout-dashboard"></i><span>Overview</span></a><a href="#plan"><i data-lucide="map"></i><span>Trip planner</span></a><a href="#map-section"><i data-lucide="locate-fixed"></i><span>Live location</span></a><a href="#stays"><i data-lucide="bed-double"></i><span>Stays</span></a><a href="#reviews"><i data-lucide="message-square-text"></i><span>Reviews</span></a></nav>
+<div class="sidebar-note"><strong>உங்கள் பயணம், உங்கள் விருப்பம்</strong>Your trip, your pace. Plan thoughtfully and explore freely.</div>
+</aside>
+<main class="main" id="top">
+<div class="topbar"><div class="breadcrumb">Workspace / Trip dashboard</div><div class="profile"><div class="avatar" aria-hidden="true">T</div><span>My travel desk</span></div></div>
+<section class="page-intro"><div><p class="eyebrow">Your next story starts here</p><h1>Make room for the journey.</h1><span class="intro-tamil" lang="ta">பயணம் இனிதாகட்டும்</span><p class="intro-copy">A little local knowledge. A lot more room to explore.</p><div class="today"><i data-lucide="calendar-days"></i><span id="todayDate"></span></div></div><div class="destination-art"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&amp;fit=crop&amp;w=900&amp;q=85" alt="Mountain landscape above the clouds"><div class="destination-caption"><div><span>Somewhere in the Nilgiris</span><strong>Ooty, Tamil Nadu</strong></div><i data-lucide="sun"></i></div></div></section>
+<section class="primary-grid" id="plan" aria-label="Trip planner and live map">
+<article class="panel"><div class="panel-inner"><div class="panel-heading"><div><h2>Where would you love to go?</h2><p>Tell me your idea, and we’ll shape a trip around you.</p></div><span class="heading-icon"><i data-lucide="sparkles"></i></span></div>
+<div class="field"><label for="language">Assistant language</label><select id="language" onchange="updateVoiceHint()"><option value="English">English</option><option value="Tamil">தமிழ் (Tamil)</option></select></div>
+<div class="field"><label for="message">Describe your trip</label><textarea id="message" placeholder="For example: Ooty for 3 days, ₹10000 budget, nature and photography."></textarea></div>
+<div class="quick-prompts" aria-label="Trip ideas"><button type="button" onclick="useTripIdea('Ooty for 3 days, ₹10000 budget, nature and photography')">Nature escape</button><button type="button" onclick="useTripIdea('Goa for 2 days, ₹8000 budget, beach')">Beach break</button><button type="button" onclick="useTripIdea('Madurai for 2 days, ₹5000 budget, temples and history')">Culture trip</button></div>
+<div class="voice-row"><button class="button secondary" id="voiceButton" type="button" onclick="toggleVoiceInput()"><i data-lucide="mic"></i><span>Speak</span></button><span class="voice-hint" id="voiceHint">Speak in English or Tamil. Your words will appear here.</span></div><p class="voice-status" id="voiceStatus" aria-live="polite"></p>
+<button class="button full" id="planButton" onclick="askAssistant()"><i data-lucide="wand-sparkles"></i>Build my trip plan</button>
+<div class="result" id="assistantResult" aria-live="polite"><div class="assistant-reply" id="assistantText"></div><button class="button secondary" type="button" onclick="speakReply()"><i data-lucide="volume-2"></i><span>Listen to reply</span></button></div>
+</div></article>
+<article class="panel map-panel" id="map-section"><div class="map-top"><div class="map-title"><span class="heading-icon"><i data-lucide="map-pinned"></i></span><div><h2>Live location</h2><p id="locationStatus">Map centered on Ooty</p></div></div><span class="live-pill" id="livePill"><span class="live-dot"></span><span id="liveLabel">Not tracking</span></span></div><div id="map" aria-label="Interactive map showing your current location"></div><div class="map-footer"><span class="coordinates" id="coordinates">Start location sharing to see your coordinates.</span><button class="button secondary" id="locationButton" onclick="toggleLocation()"><i data-lucide="locate-fixed"></i><span>Use my location</span></button></div><div class="result" id="locationResult" role="status" style="margin:0;border:0;border-radius:0;padding:10px 16px"></div></article>
+</section>
+<div class="section-title" id="stays"><div><p class="eyebrow">Trip essentials</p><h2>Stay &amp; booking</h2></div><p>Keep your travel details together</p></div>
+<section class="lower-grid">
+<article class="panel"><div class="panel-inner"><div class="panel-heading"><div><h2>Featured stay</h2><p>Ooty · Near Ooty Lake</p></div><span class="heading-icon"><i data-lucide="bed-double"></i></span></div><h3 class="stay-name">Green View Resort</h3><div class="stay-meta"><span><i data-lucide="star"></i>4.4 guest rating</span><span><i data-lucide="door-open"></i>Deluxe room</span></div><p class="price">₹1,500 <small>/ night</small></p><div class="date-grid"><div class="field"><label for="checkin">Check-in</label><input type="date" id="checkin"></div><div class="field"><label for="checkout">Check-out</label><input type="date" id="checkout"></div></div><button class="button full" onclick="bookRoom()"><i data-lucide="calendar-check"></i>Save stay dates</button><div class="result" id="bookingResult" aria-live="polite"></div></div></article>
+<article class="panel"><div class="panel-inner"><div class="panel-heading"><div><h2>Advance payment</h2><p>Review the sample booking amount.</p></div><span class="heading-icon"><i data-lucide="credit-card"></i></span></div><div class="payment-box"><div class="payment-row"><span>Room total</span><strong>₹4,500</strong></div><div class="payment-row"><span>Pay now</span><strong>₹1,000</strong></div><div class="payment-row total"><span>Due at stay</span><strong>₹3,500</strong></div></div><button class="button full" onclick="payAdvance()"><i data-lucide="lock-keyhole"></i>Pay ₹1,000 advance</button><p class="notice">Demo only. No real payment is collected.</p><div class="result" id="paymentResult" aria-live="polite"></div></div></article>
+<article class="panel" id="reviews"><div class="panel-inner"><div class="panel-heading"><div><h2>Share a review</h2><p>Leave a note about a stay or place.</p></div><span class="heading-icon"><i data-lucide="messages-square"></i></span></div><div class="review-stars" aria-label="Five stars">★★★★★</div><div class="field" style="margin-top:12px"><label for="review">Your review</label><textarea id="review" placeholder="What stood out on your trip?" style="min-height:100px"></textarea></div><button class="button secondary full" onclick="submitReview()"><i data-lucide="send"></i>Analyze review</button><div class="result" id="reviewResult" aria-live="polite"></div></div></article>
+</section></main>
+<script>
+if(window.lucide)lucide.createIcons();
+document.getElementById('todayDate').textContent=new Intl.DateTimeFormat('en',{dateStyle:'full'}).format(new Date());
+document.getElementById('checkin').min=new Date().toISOString().slice(0,10);
+const map=window.L?L.map('map',{scrollWheelZoom:false}).setView([11.4102,76.6950],12):null;
+if(map)L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);else document.getElementById('locationStatus').textContent='Map unavailable. Check your internet connection.';
+const locationIcon=window.L?L.divIcon({className:'google-like-marker',html:'<span></span>',iconSize:[27,36],iconAnchor:[14,36],popupAnchor:[0,-32]}):null;
+const marker=map?L.marker([11.4102,76.6950],{icon:locationIcon}).addTo(map).bindPopup('Ooty trip starting point'):null;
+let accuracyCircle=null,watchId=null,recognition=null,voiceSubmitWhenDone=false;
+function useTripIdea(idea){document.getElementById('message').value=idea;document.getElementById('voiceStatus').textContent='Trip idea added. You can change any details.';document.getElementById('message').focus()}
+function updateVoiceHint(){document.getElementById('voiceHint').textContent=document.getElementById('language').value==='Tamil'?'தமிழில் பேசுங்கள். உங்கள் வார்த்தைகள் இங்கே தோன்றும்.':'Speak in English. Your words will appear here.'}
+function toggleVoiceInput(){
+ if(recognition){voiceSubmitWhenDone=false;recognition.stop();document.getElementById('voiceStatus').textContent='Voice input stopped.';return}
+ const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SpeechRecognition){document.getElementById('voiceStatus').textContent='Voice input is not supported in this browser. You can type your trip instead.';return}
+ recognition=new SpeechRecognition();recognition.lang=document.getElementById('language').value==='Tamil'?'ta-IN':'en-IN';recognition.interimResults=true;recognition.continuous=false;voiceSubmitWhenDone=true;
+ const input=document.getElementById('message'),previous=input.value.trim();document.getElementById('voiceStatus').textContent=recognition.lang==='ta-IN'?'கேட்கிறது... இப்போது பேசுங்கள்.':'Listening... Speak now.';document.getElementById('voiceButton').innerHTML='<i data-lucide="mic-off"></i><span>Stop</span>';if(window.lucide)lucide.createIcons();
+ recognition.onresult=event=>{const words=Array.from(event.results).map(result=>result[0].transcript).join(' ');input.value=previous?`${previous} ${words}`:words};
+ recognition.onerror=event=>{voiceSubmitWhenDone=false;const messages={'not-allowed':'Microphone permission was blocked. Allow microphone access and try again.','no-speech':'No speech was detected. Tap Speak and try again.','network':'Voice recognition needs an internet connection. You can type your trip instead.'};document.getElementById('voiceStatus').textContent=messages[event.error]||'Voice input could not start. Please try typing your trip.'};
+ recognition.onend=()=>{recognition=null;document.getElementById('voiceButton').innerHTML='<i data-lucide="mic"></i><span>Speak</span>';if(window.lucide)lucide.createIcons();const shouldSubmit=voiceSubmitWhenDone&&input.value.trim();voiceSubmitWhenDone=false;if(shouldSubmit)askAssistant(true);else if(input.value.trim())document.getElementById('voiceStatus').textContent='Voice captured. Review or edit your trip before continuing.'};
+ try{recognition.start()}catch(error){recognition=null;voiceSubmitWhenDone=false;document.getElementById('voiceStatus').textContent='Could not start the microphone. Please try again.'}
+}
+async function askAssistant(fromVoice=false){const message=document.getElementById('message').value.trim(),language=document.getElementById('language').value,button=document.getElementById('planButton'),output=document.getElementById('assistantText');if(!message){document.getElementById('voiceStatus').textContent='Tell me where you would like to go, by typing or speaking.';document.getElementById('message').focus();return}button.disabled=true;button.textContent='Making your plan...';try{const response=await fetch('/assistant',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,language})});if(!response.ok)throw Error();const data=await response.json();output.textContent=data.reply;if(fromVoice)speakReply()}catch(error){output.textContent='I could not reach the travel assistant. Please check your connection and try again.'}finally{button.disabled=false;button.innerHTML='<i data-lucide="wand-sparkles"></i>Build my trip plan';if(window.lucide)lucide.createIcons()}}
+function speakReply(){const text=document.getElementById('assistantText').textContent.trim(),status=document.getElementById('voiceStatus');if(!text)return;if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){status.textContent='Spoken replies are not supported in this browser. You can read the reply above.';return}speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang=document.getElementById('language').value==='Tamil'?'ta-IN':'en-IN';const voices=speechSynthesis.getVoices(),prefix=utterance.lang.slice(0,2).toLowerCase();utterance.voice=voices.find(voice=>voice.lang.toLowerCase()===utterance.lang.toLowerCase())||voices.find(voice=>voice.lang.toLowerCase().startsWith(prefix))||null;utterance.onstart=()=>status.textContent='Speaking the reply aloud...';utterance.onend=()=>status.textContent='Spoken reply finished.';utterance.onerror=()=>status.textContent='Could not play the spoken reply. Check your device audio settings.';speechSynthesis.speak(utterance)}
+function toggleLocation(){if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;document.getElementById('locationButton').innerHTML='<i data-lucide="locate-fixed"></i><span>Use my location</span>';document.getElementById('locationButton').classList.remove('danger');document.getElementById('locationStatus').textContent='Live tracking paused';document.getElementById('livePill').classList.remove('is-live');document.getElementById('liveLabel').textContent='Not tracking';document.getElementById('locationResult').textContent='Location sharing is paused.';if(window.lucide)lucide.createIcons();return}if(!navigator.geolocation){showLocationError('This browser does not support GPS location.');return}const button=document.getElementById('locationButton');button.disabled=true;button.textContent='Finding you...';watchId=navigator.geolocation.watchPosition(updateLocation,error=>{if(watchId!==null)navigator.geolocation.clearWatch(watchId);watchId=null;const messages={1:'Location permission was denied. Allow location access in your browser settings and try again.',2:'Your location is unavailable right now. Check your device GPS and try again.',3:'Finding your location timed out. Please try again.'};showLocationError(messages[error.code]||'Unable to retrieve your location.')},{enableHighAccuracy:true,maximumAge:5000,timeout:20000})}
+function updateLocation(position){const{latitude,longitude,accuracy}=position.coords,point=[latitude,longitude];if(marker)marker.setLatLng(point).bindPopup('Your current location');if(map)map.setView(point,Math.max(map.getZoom(),15));if(map&&accuracyCircle)accuracyCircle.setLatLng(point).setRadius(accuracy);else if(map)accuracyCircle=L.circle(point,{radius:accuracy,color:'#176b55',fillColor:'#7db99a',fillOpacity:.16,weight:1}).addTo(map);document.getElementById('coordinates').textContent=`${latitude.toFixed(5)}, ${longitude.toFixed(5)} · ±${Math.round(accuracy)} m`;document.getElementById('locationStatus').textContent='Your position is updating as you move';document.getElementById('livePill').classList.add('is-live');document.getElementById('liveLabel').textContent='Live location';document.getElementById('locationResult').textContent='GPS is active. Your location is shown on the map.';const button=document.getElementById('locationButton');button.disabled=false;button.classList.add('danger');button.innerHTML='<i data-lucide="locate-off"></i><span>Stop sharing</span>';if(window.lucide)lucide.createIcons()}
+function showLocationError(message){const button=document.getElementById('locationButton');button.disabled=false;button.classList.remove('danger');button.innerHTML='<i data-lucide="locate-fixed"></i><span>Try location again</span>';document.getElementById('locationStatus').textContent='Location unavailable';document.getElementById('locationResult').textContent=message+' GPS requires permission and a secure origin (HTTPS or localhost).';if(window.lucide)lucide.createIcons()}
+function bookRoom(){const checkin=document.getElementById('checkin').value,checkout=document.getElementById('checkout').value,result=document.getElementById('bookingResult');if(!checkin||!checkout||new Date(checkout)<=new Date(checkin)){result.textContent='Choose a check-in date and a later check-out date.';return}const nights=Math.round((new Date(checkout)-new Date(checkin))/86400000);result.textContent=`Stay dates saved: ${checkin} to ${checkout} (${nights} night${nights===1?'':'s'}).`}
+function payAdvance(){document.getElementById('paymentResult').textContent='Demo booking only. No payment was taken. Connect a payment provider before accepting real payments.'}
+async function submitReview(){const review=document.getElementById('review').value.trim(),result=document.getElementById('reviewResult');if(!review){result.textContent='Write a short review first.';document.getElementById('review').focus();return}result.textContent='Analyzing review...';try{const response=await fetch('/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({review})});if(!response.ok)throw Error();const data=await response.json();result.textContent=`Review sentiment: ${data.sentiment}`}catch(error){result.textContent='Could not analyze the review right now. Please try again.'}}
+</script>
+</body>
+<script>
+const planResult = document.getElementById('assistantResult');
+const itineraryGrid = document.createElement('div');
+itineraryGrid.className = 'itinerary-grid';
+itineraryGrid.setAttribute('aria-label', 'Day-by-day itinerary');
+const costSummary = document.createElement('div');
+costSummary.className = 'plan-cost';
+const planActions = document.createElement('div');
+planActions.className = 'plan-actions';
+const downloadButton = document.createElement('button');
+downloadButton.className = 'button secondary';
+downloadButton.type = 'button';
+downloadButton.innerHTML = '<i data-lucide="download"></i><span>Download itinerary</span>';
+downloadButton.onclick = downloadItinerary;
+const listenButton = planResult.querySelector('button');
+planResult.insertBefore(costSummary, listenButton);
+planResult.insertBefore(itineraryGrid, listenButton);
+planActions.append(downloadButton);
+planResult.insertBefore(planActions, listenButton);
+
+let currentPlan = null;
+let itinerarySpeech = '';
+
+function renderTripPlan(plan) {
+	currentPlan = plan;
+	const estimate = plan.estimate;
+	costSummary.replaceChildren();
+	const amount = document.createElement('strong');
+	amount.textContent = `₹${estimate.per_day.toLocaleString('en-IN')} / person / day`;
+	const note = document.createElement('span');
+	note.textContent = `Approx. ₹${estimate.total.toLocaleString('en-IN')} for ${plan.days} days, excluding intercity travel.`;
+	costSummary.append(amount, note);
+	if (estimate.budget_per_day !== null) {
+		const status = document.createElement('span');
+		status.className = `budget-status${estimate.within_budget ? '' : ' tight'}`;
+		status.textContent = estimate.within_budget
+			? `Within budget · ₹${estimate.budget_per_day.toLocaleString('en-IN')}/day`
+			: `Budget may be tight · ₹${estimate.budget_per_day.toLocaleString('en-IN')}/day`;
+		costSummary.append(status);
+	}
+
+	itineraryGrid.replaceChildren();
+	for (const day of plan.itinerary) {
+		const row = document.createElement('article');
+		row.className = 'day-plan';
+		const dayName = document.createElement('div');
+		dayName.className = 'day-index';
+		dayName.textContent = document.getElementById('language').value === 'Tamil'
+			? `நாள் ${day.day}`
+			: `Day ${String(day.day).padStart(2, '0')}`;
+		const stops = document.createElement('div');
+		stops.className = 'day-stops';
+		for (const key of ['morning', 'afternoon', 'evening']) {
+			const stop = document.createElement('div');
+			stop.className = 'day-stop';
+			const time = document.createElement('span');
+			const place = document.createElement('strong');
+			time.textContent = day[key].label;
+			place.textContent = day[key].place;
+			stop.append(time, place);
+			stops.append(stop);
+		}
+		row.append(dayName, stops);
+		itineraryGrid.append(row);
+	}
+	itinerarySpeech = [plan.reply, ...plan.itinerary.map(day =>
+		`Day ${day.day}. ${day.morning.label}: ${day.morning.place}. ${day.afternoon.label}: ${day.afternoon.place}. ${day.evening.label}: ${day.evening.place}.`
+	)].join(' ');
+	planResult.classList.add('has-plan');
+}
+
+function downloadItinerary() {
+	if (!currentPlan) return;
+	const lines = [currentPlan.reply, '', ...currentPlan.itinerary.flatMap(day => [
+		`Day ${day.day}`,
+		`${day.morning.label}: ${day.morning.place}`,
+		`${day.afternoon.label}: ${day.afternoon.place}`,
+		`${day.evening.label}: ${day.evening.place}`,
+		''
+	])];
+	const file = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+	const url = URL.createObjectURL(file);
+	const link = document.createElement('a');
+	const destination = currentPlan.details.destination.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+	link.href = url;
+	link.download = `${destination || 'trip'}-itinerary.txt`;
+	link.click();
+	URL.revokeObjectURL(url);
+}
+
+async function askAssistant(fromVoice = false) {
+	const message = document.getElementById('message').value.trim();
+	const language = document.getElementById('language').value;
+	const button = document.getElementById('planButton');
+	if (!message) {
+		document.getElementById('voiceStatus').textContent = 'Tell me where you would like to go, by typing or speaking.';
+		document.getElementById('message').focus();
+		return;
+	}
+	button.disabled = true;
+	button.textContent = 'Making your plan...';
+	try {
+		const response = await fetch('/assistant', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ message, language })
+		});
+		if (!response.ok) throw new Error('Assistant request failed');
+		const data = await response.json();
+		document.getElementById('assistantText').textContent = data.reply;
+		renderTripPlan({ ...data, details: data.details });
+		planResult.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		if (fromVoice) speakReply();
+	} catch (error) {
+		planResult.classList.add('has-plan');
+		costSummary.textContent = 'Could not reach the travel assistant. Check your connection and try again.';
+		itineraryGrid.replaceChildren();
+		planActions.replaceChildren();
+	} finally {
+		button.disabled = false;
+		button.innerHTML = '<i data-lucide="wand-sparkles"></i>Build my trip plan';
+		if (window.lucide) lucide.createIcons();
+	}
+}
+
+function speakReply() {
+	const text = itinerarySpeech || document.getElementById('assistantText').textContent.trim();
+	const status = document.getElementById('voiceStatus');
+	if (!text) return;
+	if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+		status.textContent = 'Spoken replies are not supported in this browser. You can read the reply above.';
+		return;
+	}
+	speechSynthesis.cancel();
+	const utterance = new SpeechSynthesisUtterance(text);
+	utterance.lang = document.getElementById('language').value === 'Tamil' ? 'ta-IN' : 'en-IN';
+	const voices = speechSynthesis.getVoices();
+	const prefix = utterance.lang.slice(0, 2).toLowerCase();
+	utterance.voice = voices.find(voice => voice.lang.toLowerCase() === utterance.lang.toLowerCase())
+		|| voices.find(voice => voice.lang.toLowerCase().startsWith(prefix)) || null;
+	utterance.onstart = () => { status.textContent = 'Speaking the itinerary aloud...'; };
+	utterance.onend = () => { status.textContent = 'Spoken itinerary finished.'; };
+	utterance.onerror = () => { status.textContent = 'Could not play the spoken reply. Check your device audio settings.'; };
+	speechSynthesis.speak(utterance);
+}
+</script>
+</html>
